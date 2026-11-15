@@ -1,0 +1,8 @@
+﻿metodo,paradigma,evaluaciones,Kp1,Kp2,Kp3,Kd1,Kd2,Kd3,rmse_robusto_mm,esfuerzo_robusto_Nm2s,reduccion_rmse_pct,reduccion_esfuerzo_pct,indice_escalar_J,tiempo_s
+CTC Base (Asignación Analítica de Polos),Clásico Analítico,1,169.0,169.0,169.0,28.6,28.6,28.6,11.3533,0.515921,0.0,0.0,1.0,0.31
+Búsqueda Aleatoria Uniforme (Monte Carlo),Heurística Básica,160,214.02,227.61,245.3,44.71,43.53,36.41,7.7897,0.513671,31.39,0.44,0.8409,4.1
+Nelder-Mead Simplex (Local sin Derivadas),Clásico Numérico,60,250.0,221.3,250.0,10.54,21.7,23.78,7.6265,0.512901,32.83,0.59,0.8329,18.97
+Evolución Diferencial (DE/rand/1/bin),Evolutivo Monobjetivo,160,238.96,210.88,249.5,54.11,22.09,15.55,7.583,0.512321,33.21,0.7,0.8305,12.71
+Estrategia Evolutiva CMA-ES,Evolutivo Covarianza,160,250.0,219.57,249.97,19.94,55.0,41.5,7.5763,0.513552,33.27,0.46,0.8314,11.6
+"NSGA-II Modo Rápido (N=8, G=4)",Evolutivo Multiobjetivo,32,239.88,191.92,215.83,50.22,29.67,9.0,8.8082,0.512962,22.42,0.57,0.885,1.45
+"NSGA-II Modo Tesis (N=24, G=20)",Evolutivo Multiobjetivo,480,203.94,195.39,249.58,49.65,17.33,4.2,7.8267,0.511447,31.06,0.87,0.8404,29.88
