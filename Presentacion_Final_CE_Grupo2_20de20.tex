@@ -1,4 +1,4 @@
-\documentclass[aspectratio=169,10pt]{beamer}
+\documentclass[aspectratio=169,9pt]{beamer}
 \usetheme{Madrid}
 \usecolortheme{whale}
 \usefonttheme{professionalfonts}
@@ -33,17 +33,18 @@
 \setbeamercolor{block title example}{bg=unigreen,fg=white}
 \setbeamercolor{block body example}{bg=unigreen!6,fg=black}
 
+\setbeamersize{text margin left=4mm,text margin right=4mm}
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{footline}{
   \leavevmode%
   \hbox{%
-  \begin{beamercolorbox}[wd=.30\paperwidth,ht=2.4ex,dp=1ex,center]{author in head/foot}%
+  \begin{beamercolorbox}[wd=.30\paperwidth,ht=2.2ex,dp=0.9ex,center]{author in head/foot}%
     \usebeamerfont{author in head/foot}UNI — Posgrado FIIS (MAE-IA 2026-2)
   \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=.52\paperwidth,ht=2.4ex,dp=1ex,center]{title in head/foot}%
+  \begin{beamercolorbox}[wd=.52\paperwidth,ht=2.2ex,dp=0.9ex,center]{title in head/foot}%
     \usebeamerfont{title in head/foot}Sintonización Evolutiva Robusta NSGA-II en Brazo Robótico 3-DOF (MuJoCo)
   \end{beamercolorbox}%
-  \begin{beamercolorbox}[wd=.18\paperwidth,ht=2.4ex,dp=1ex,right]{date in head/foot}%
+  \begin{beamercolorbox}[wd=.18\paperwidth,ht=2.2ex,dp=0.9ex,right]{date in head/foot}%
     \usebeamerfont{date in head/foot}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
   \end{beamercolorbox}}%
   \vskip0pt%
@@ -51,10 +52,9 @@
 
 \title[Control Robótico 3-DOF con NSGA-II]{\textbf{Estrategia Evolutiva Multiobjetivo Elitista (NSGA-II) para la Sintonización Robusta de un Controlador por Torque Computado en un Brazo Robótico Espacial de 3 GDL}}
 \subtitle{Asignatura: Computación Evolutiva (2026-2) $\mid$ Docente: Dr. Yván Jesús Túpac Valdivia}
-\author[Grupo 2 — MAE-IA UNI]{\textbf{Expositores (3 min c/u):} \\
-1. Amit Roy Flores Rivera \quad 2. Franklin Enrique Alegría Barboza \quad 3. Raquel Medianero Huari \\
-4. Yasmín Mariela Urrego Montoya \quad 5. José Luis Espinoza Chamaya (\textit{Demo MuJoCo 3D en Vivo})}
-\institute[UNI FIIS]{Universidad Nacional de Ingeniería — Facultad de Ingeniería Industrial y de Sistemas\\[0.1cm]
+\author[Grupo 2 — MAE-IA UNI]{\textbf{Grupo 2:} Amit Roy Flores Rivera $\cdot$ Franklin Enrique Alegría Barboza $\cdot$ Raquel Medianero Huari \\
+Yasmín Mariela Urrego Montoya $\cdot$ José Luis Espinoza Chamaya}
+\institute[UNI FIIS]{Universidad Nacional de Ingeniería — Facultad de Ingeniería Industrial y de Sistemas\\[0.08cm]
 \textbf{Repositorio GitHub:} \url{https://github.com/yasminum/NSGA-II-evol-strategic-multi}}
 \date{Lima, Perú — Noviembre 2026}
 
@@ -68,24 +68,30 @@
 \end{frame}
 
 % ==============================================================================
-% BLOQUE 1 — EXPOSITOR 1: AMIT ROY FLORES RIVERA (MIN 00:00 - 03:00)
-% FASE I: MODELADO DEL PROBLEMA ROBÓTICO Y FORMULACIÓN MULTIOBJETIVO
+% SLIDE 2: PROBLEMA FÍSICO Y FALLA DEL DISEÑO CLÁSICO
 % ==============================================================================
-\begin{frame}{Expositor 1 (Amit Flores): Problema Físico y Falla del Diseño Clásico}
+\begin{frame}{Problema Físico y Falla del Diseño Clásico}
+\vspace{-0.15cm}
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.54\textwidth}
-    \begin{block}{1. Dinámica No Lineal Acoplada de Cuerpo Rígido (3-DOF RRR)}
+    \begin{block}{\footnotesize 1. Dinámica No Lineal Acoplada de Cuerpo Rígido (3-DOF RRR)}
+        \scriptsize
         \vspace{-0.15cm}
         \[
             M(q)\ddot{q} + C(q,\dot{q})\dot{q} + g(q) + f_v\dot{q} + \tau_f(\dot{q}) = \tau + \tau_{\text{ext}}(t)
         \]
+        \vspace{-0.2cm}
         Ley de Control por Torque Computado (CTC) con modelo nominal $(\hat{M}, \hat{h})$:
+        \vspace{-0.15cm}
         \[
             \tau_{\text{cmd}} = \hat{M}(q)\big(\ddot{q}_r + K_p e + K_d \dot{e}\big) + \hat{h}(q,\dot{q})
         \]
+        \vspace{-0.2cm}
     \end{block}
-    \begin{alertblock}{2. ¿Por qué fracasa la Asignación Analítica Uniforme ($\omega_n=13, \zeta=1.1$)?}
-        \begin{itemize}
+    \vspace{-0.1cm}
+    \begin{alertblock}{\footnotesize 2. ¿Por qué fracasa la Asignación Analítica Uniforme ($\omega_n=13, \zeta=1.1$)?}
+        \scriptsize
+        \begin{itemize}\setlength{\itemsep}{1pt}
             \item \textbf{Asimetría inercial 10:1:} Cintura AX-18A ($m_1=0.25\text{ kg}$, toda la cadena) vs. Hombro en voladizo vs. Codo distal AX-12A ($\tau_{\max,3}=0.45\text{ N}\cdot\text{m}$).
             \item \textbf{Saturación dura no diferenciable:} $\tau_i = \operatorname{clip}(\tau_{\text{cmd},i}, -\tau_{\max,i}, +\tau_{\max,i})$.
             \item \textbf{Incertidumbre planta-modelo ($\hat{M} \neq M$):} Masa $+25\%/+15\%$ y fricción $+30\%$ destruyen la cancelación lineal exacta.
@@ -94,26 +100,36 @@
 \end{column}
 \begin{column}{0.44\textwidth}
     \centering
-    \includegraphics[width=0.98\linewidth]{figuras_ce/fig_estados_3d_enceste.png}
-    \vspace{0.05cm}
+    \vspace{0.1cm}
+    \includegraphics[width=0.98\linewidth]{figuras_ce/fig_estados_3d_enceste.png}\\[0.15cm]
     {\scriptsize \textbf{Gemelo Digital 3D en MuJoCo ($\Delta t_{\text{sim}}=2\text{ ms}$, Control $100\text{ Hz}$)}: Doble instancia en memoria (Planta Física Perturbada vs. Modelo Nominal $\hat{M}$).}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Expositor 1 (Amit Flores): Formulación Matemática del Problema Evolutivo}
+% ==============================================================================
+% SLIDE 3: FORMULACIÓN MATEMÁTICA DEL PROBLEMA EVOLUTIVO
+% ==============================================================================
+\begin{frame}{Formulación Matemática del Problema Evolutivo}
+\vspace{-0.18cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.52\textwidth}
-    \begin{block}{Cromosoma de Decisión ($\theta \in \Omega \subset \mathbb{R}^6$)}
+\begin{column}{0.50\textwidth}
+    \begin{block}{\footnotesize Cromosoma de Decisión ($\theta \in \Omega \subset \mathbb{R}^6$)}
+        \scriptsize
+        \vspace{-0.18cm}
         \[
             \theta = \begin{bmatrix} K_{p1} & K_{p2} & K_{p3} & K_{d1} & K_{d2} & K_{d3} \end{bmatrix}^T
         \]
+        \vspace{-0.22cm}
         \[
             \Omega = [20.0,\, 250.0]^3 \times [3.0,\, 55.0]^3 \subset \mathbb{R}^6
         \]
+        \vspace{-0.2cm}
     \end{block}
-    \begin{exampleblock}{4 Escenarios Dinámicos Robustos ($\mathcal{S} = \{s_1,s_2,s_3,s_4\}$, $T=9\text{ s}$)}
-        \begin{enumerate}
+    \vspace{-0.12cm}
+    \begin{exampleblock}{\footnotesize 4 Escenarios Dinámicos Robustos ($\mathcal{S} = \{s_1,s_2,s_3,s_4\}$, $T=9\text{ s}$)}
+        \scriptsize
+        \begin{enumerate}\setlength{\itemsep}{1pt}
             \item $s_1$ \textbf{Nominal:} Seguimiento quíntico suave $\mathcal{C}^2$.
             \item $s_2$ \textbf{Perturbación 3D:} Pulso $\tau_{\text{ext}} = [0.035, -0.040, 0.025]^T\text{ N}\cdot\text{m}$ en $t \in [6.0, 6.6]\text{ s}$.
             \item $s_3$ \textbf{Incertidumbre:} $+25\%$ masa eslabón 1, $+15\%$ eslabón 2, $+30\%$ amortiguamiento.
@@ -121,20 +137,28 @@
         \end{enumerate}
     \end{exampleblock}
 \end{column}
-\begin{column}{0.46\textwidth}
-    \begin{block}{Vector Objetivo en Conflicto ($\min_{\theta \in \Omega} \mathbf{F}(\theta)$)}
+\begin{column}{0.48\textwidth}
+    \begin{block}{\footnotesize Vector Objetivo en Conflicto ($\min_{\theta \in \Omega} \mathbf{F}(\theta)$)}
+        \scriptsize
+        \vspace{-0.15cm}
         \[
             f_1(\theta) = \frac{1}{|\mathcal{S}|}\sum_{s \in \mathcal{S}} \text{RMSE}_{\text{seg}}^{(s)}(\theta) \quad [\text{mm}]
         \]
+        \vspace{-0.22cm}
         \[
             f_2(\theta) = \frac{1}{|\mathcal{S}|}\sum_{s \in \mathcal{S}} \int_0^T \|\tau^{(s)}(t;\theta)\|_2^2\,dt \quad [\text{N}^2\text{m}^2\text{s}]
         \]
-        \textbf{+ Extensión Tri-Objetivo Adversarial ($\mathbb{R}^3$):}
+        \vspace{-0.1cm}
+        \textbf{+ Extensión Tri-Objetivo Adversarial ($\mathbb{R}^3$, Anti-Chattering):}
+        \vspace{-0.15cm}
         \[
-            f_3(\theta) = \int_0^T \|\dot{\tau}(t;\theta)\|_2^2\,dt \quad [\text{N}^2\text{m}^2/\text{s}] \text{ (Anti-Chattering)}
+            f_3(\theta) = \int_0^T \|\dot{\tau}(t;\theta)\|_2^2\,dt \quad [\text{N}^2\text{m}^2/\text{s}]
         \]
+        \vspace{-0.2cm}
     \end{block}
-    \begin{alertblock}{Restricciones Duras de Hardware}
+    \vspace{-0.12cm}
+    \begin{alertblock}{\footnotesize Restricciones Duras de Hardware}
+        \scriptsize
         $|\tau_i(t)| \le [0.70, 0.70, 0.45]^T\text{ N}\cdot\text{m}$, límites articulares $q_{\min} \le q(t) \le q_{\max}$ y estabilidad finita.
     \end{alertblock}
 \end{column}
@@ -142,90 +166,109 @@
 \end{frame}
 
 % ==============================================================================
-% BLOQUE 2 — EXPOSITOR 2: FRANKLIN ENRIQUE ALEGRÍA BARBOZA (MIN 03:00 - 06:00)
-% FASE II Y III: DISEÑO DE NSGA-II, OPERADORES, SELECTOR POST-PARETO Y PARALELIZACIÓN
+% SLIDE 4: ARQUITECTURA EVOLUTIVA NSGA-II Y OPERADORES
 % ==============================================================================
-\begin{frame}{Expositor 2 (Franklin Alegría): Arquitectura Evolutiva NSGA-II y Operadores}
+\begin{frame}{Arquitectura Evolutiva NSGA-II y Operadores}
+\vspace{-0.15cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.55\textwidth}
-    \begin{block}{¿Por qué NSGA-II con Codificación Real sobre otros Paradigmas?}
-        \begin{itemize}
+\begin{column}{0.53\textwidth}
+    \begin{block}{\footnotesize ¿Por qué NSGA-II con Codificación Real sobre otros Paradigmas?}
+        \scriptsize
+        \begin{itemize}\setlength{\itemsep}{2pt}
             \item \textbf{Sin pesos arbitrarios a priori:} Descubre la geometría completa del frente de Pareto en una sola corrida pese a la disparidad de escalas ($f_1 \sim 10^1\text{ mm}$ vs. $f_2 \sim 0.5\text{ N}^2\text{m}^2\text{s}$).
             \item \textbf{Operadores continuos libres de Hamming cliffs:}
-            \begin{itemize}
-                \item \textbf{Cruce SBX ($p_c=0.90, \eta_c=15$):} Poder de búsqueda auto-adaptativo proporcional a $|p_1 - p_2|$.
-                \item \textbf{Mutación Polinomial PM ($p_m=1/6, \eta_m=20$):} Modifica 1 gen por cromosoma respetando $\Omega$.
+            \begin{itemize}\setlength{\itemsep}{1pt}
+                \item \scriptsize \textbf{Cruce SBX ($p_c=0.90, \eta_c=15$):} Poder de búsqueda auto-adaptativo proporcional a $|p_1 - p_2|$.
+                \item \scriptsize \textbf{Mutación Polinomial PM ($p_m=1/6, \eta_m=20$):} Modifica 1 gen por cromosoma respetando $\Omega$.
             \end{itemize}
             \item \textbf{Elitismo $(\mu+\lambda)$ + Torneo Aglomerado ($\prec_c$):} Retiene siempre los mejores frentes $\mathcal{F}_1, \mathcal{F}_2$ y maximiza cobertura vía \textit{Crowding Distance}.
         \end{itemize}
     \end{block}
 \end{column}
-\begin{column}{0.43\textwidth}
-    \begin{exampleblock}{Selector Automático Post-Pareto ($\theta^*$)}
+\begin{column}{0.45\textwidth}
+    \begin{exampleblock}{\footnotesize Selector Automático Post-Pareto ($\theta^*$)}
+        \scriptsize
         1. Filtra el cono que mejora al controlador base:
+        \vspace{-0.15cm}
         \[
             \mathcal{F}_{\text{dom}} = \{\theta \in \mathcal{F}_1 \mid f_1(\theta) \le f_1(\theta_{\text{base}})\}
         \]
+        \vspace{-0.15cm}
         2. Minimiza la distancia $L_2$ normalizada al punto utópico ideal $z^{\min}$:
+        \vspace{-0.15cm}
         \[
             \theta^* = \arg\min_{\theta \in \mathcal{F}_{\text{dom}}} \sqrt{\sum_{m=1}^2 \left(\frac{f_m(\theta)-z_m^{\min}}{z_m^{\max}-z_m^{\min}}\right)^2}
         \]
+        \vspace{-0.18cm}
     \end{exampleblock}
-    \begin{alertblock}{Ingeniería de Software: Speedup $18.7\times$}
+    \vspace{-0.1cm}
+    \begin{alertblock}{\footnotesize Ingeniería de Software: Speedup $18.7\times$}
+        \scriptsize
         \texttt{ProcessPoolExecutor} (12 núcleos) con modelos MuJoCo pre-cargados en RAM: \textbf{de $1.16\text{ s}$ a $0.062\text{ s}$/eval} ($1,920$ simulaciones en \textbf{$29.88\text{ s}$}).
     \end{alertblock}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Expositor 2 (Franklin Alegría): Frente de Pareto y Dominancia Estricta}
+% ==============================================================================
+% SLIDE 5: FRENTE DE PARETO Y DOMINANCIA ESTRICTA
+% ==============================================================================
+\begin{frame}{Frente de Pareto y Dominancia Estricta}
+\vspace{-0.15cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.56\textwidth}
+\begin{column}{0.55\textwidth}
     \centering
-    \includegraphics[width=0.99\linewidth]{figuras_ce/fig_ce_01_frente_pareto.png}
+    \includegraphics[width=0.98\linewidth]{figuras_ce/fig_ce_01_frente_pareto.png}
 \end{column}
-\begin{column}{0.42\textwidth}
-    \begin{exampleblock}{Dominancia Estricta sobre el Diseño Analítico}
-        \begin{itemize}
-            \item \textbf{CTC Base ($\omega_n=13, \zeta=1.1$):} $f_1 = 11.353\text{ mm}$, $f_2 = 0.5159\text{ N}^2\text{m}^2\text{s}$.
-            \item \textbf{Extremo \#1 (Máx. Precisión):} $f_1 = \mathbf{7.640\text{ mm}}$ ($-32.7\%$), $f_2 = 0.5128$.
-            \item \textbf{Compromiso Tesis $\theta^*$ (\#2):} $f_1 = \mathbf{7.827\text{ mm}}$ ($\mathbf{-31.06\%}$), $f_2 = \mathbf{0.5114}$ ($\mathbf{-0.87\%}$).
-            \item \textbf{Extremo \#24 (Modo Eco):} $f_2 = \mathbf{0.4466\text{ N}^2\text{m}^2\text{s}}$ ($-13.4\%$ energía).
+\begin{column}{0.43\textwidth}
+    \begin{exampleblock}{\footnotesize Dominancia Estricta sobre el Diseño Analítico}
+        \scriptsize
+        \begin{itemize}\setlength{\itemsep}{2pt}
+            \item \textbf{CTC Base ($\omega_n=13, \zeta=1.1$):} \\
+            $f_1 = 11.353\text{ mm}$, $f_2 = 0.5159\text{ N}^2\text{m}^2\text{s}$.
+            \item \textbf{Extremo \#1 (Máx. Precisión):} \\
+            $f_1 = \mathbf{7.640\text{ mm}}$ ($-32.7\%$), $f_2 = 0.5128\text{ N}^2\text{m}^2\text{s}$.
+            \item \textbf{Compromiso Tesis $\theta^*$ (\#2):} \\
+            $f_1 = \mathbf{7.827\text{ mm}}$ ($\mathbf{-31.06\%}$), $f_2 = \mathbf{0.5114}$ ($\mathbf{-0.87\%}$).
+            \item \textbf{Extremo \#24 (Modo Eco):} \\
+            $f_2 = \mathbf{0.4466\text{ N}^2\text{m}^2\text{s}}$ ($-13.4\%$ energía).
         \end{itemize}
     \end{exampleblock}
-    \begin{block}{Repositorio Abierto Reproducible}
-        {\scriptsize \url{https://github.com/yasminum/NSGA-II-evol-strategic-multi}}
+    \vspace{-0.05cm}
+    \begin{block}{\footnotesize Repositorio Abierto Reproducible}
+        \scriptsize
+        \url{https://github.com/yasminum/NSGA-II-evol-strategic-multi}
     \end{block}
 \end{column}
 \end{columns}
 \end{frame}
 
 % ==============================================================================
-% BLOQUE 3 — EXPOSITORA 3: RAQUEL MEDIANERO HUARI (MIN 06:00 - 09:00)
-% DINÁMICA POBLACIONAL, HIPERVOLUMEN, SENSIBILIDAD (S1-S9) Y LEY BIOMECÁNICA
+% SLIDE 6: CONVERGENCIA, HIPERVOLUMEN Y SENSIBILIDAD
 % ==============================================================================
-\begin{frame}{Expositora 3 (Raquel Medianero): Convergencia, Hipervolumen y Sensibilidad}
+\begin{frame}{Convergencia, Hipervolumen y Sensibilidad}
+\vspace{-0.18cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.50\textwidth}
+\begin{column}{0.49\textwidth}
     \centering
-    \includegraphics[width=0.99\linewidth]{figuras_ce/fig_ce_02_convergencia_generacional.png}
-    \vspace{-0.2cm}
+    \includegraphics[width=0.96\linewidth]{figuras_ce/fig_ce_02_convergencia_generacional.png}
+    \vspace{-0.22cm}
     \begin{block}{\scriptsize Dinámica Generacional ($N_{\text{pop}}=24, G=20$)}
         \scriptsize
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0.5pt}
             \item \textbf{Monotonía elitista:} $f_1^{\min}$ baja de $8.316 \to 7.640\text{ mm}$; $f_2^{\min}$ baja de $0.4999 \to 0.4466$.
             \item \textbf{¿Por qué sube $\bar{f}_1(g)$?} \textit{Crowding Distance} puebla la cola de ultra-baja energía ($K_{p2} \in [24,60]$).
             \item \textbf{Sin convergencia prematura:} $HV(g)$ converge a $\mathbf{0.5489}$ con diversidad sana $\sigma_\theta = 0.153 > 0$.
         \end{itemize}
     \end{block}
 \end{column}
-\begin{column}{0.48\textwidth}
+\begin{column}{0.49\textwidth}
     \centering
-    \includegraphics[width=0.99\linewidth]{figuras_ce/fig_ce_03_sensibilidad_y_comparacion.png}
-    \vspace{-0.2cm}
+    \includegraphics[width=0.96\linewidth]{figuras_ce/fig_ce_03_sensibilidad_y_comparacion.png}
+    \vspace{-0.22cm}
     \begin{exampleblock}{\scriptsize Estudio de Sensibilidad ($S_1 \dots S_9$)}
         \scriptsize
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{0.5pt}
             \item \textbf{Profundidad vs. Anchura:} $S_3$ ($24\times 20=480$ evals, $HV=0.5489$, $29.9\text{ s}$) supera a $S_4$ ($36\times 15=540$ evals, $HV=0.5422$, $37.8\text{ s}$).
             \item \textbf{Mutación:} Muy baja ($S_7, p_m=0.05$) estanca en $8.98\text{ mm}$; agresiva ($S_9, \eta_m=5$) destruye bloques constructores ($8.80\text{ mm}$).
         \end{itemize}
@@ -234,24 +277,32 @@
 \end{columns}
 \end{frame}
 
-\begin{frame}{Expositora 3 (Raquel Medianero): Interpretación Biomecánica del Cromosoma $\theta^*$}
+% ==============================================================================
+% SLIDE 7: INTERPRETACIÓN BIOMECÁNICA DEL CROMOSOMA \theta^*
+% ==============================================================================
+\begin{frame}{Interpretación Biomecánica del Cromosoma $\theta^*$}
+\vspace{-0.15cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.54\textwidth}
+\begin{column}{0.52\textwidth}
     \centering
+    \vspace{0.15cm}
     \includegraphics[width=0.99\linewidth]{figuras_ce/fig_ce_04_ganancias_cromosoma.png}
 \end{column}
-\begin{column}{0.44\textwidth}
-    \begin{block}{Ley Estructural Descubierta por NSGA-II}
+\begin{column}{0.46\textwidth}
+    \begin{block}{\footnotesize Ley Estructural Descubierta por NSGA-II}
+        \scriptsize
+        \vspace{-0.15cm}
         \[
             \theta^*_{\text{tesis}} = [203.9,\, 195.4,\, 249.6,\, 49.65,\, 17.33,\, 4.20]^T
         \]
-        \begin{enumerate}
+        \vspace{-0.15cm}
+        \begin{enumerate}\setlength{\itemsep}{2pt}
             \item \textbf{Rigidización Proporcional ($K_{p,i} > 169$):} Rechaza la incertidumbre de masa $+25\%/+15\%$ y el pulso externo $\tau_{\text{ext}}$.
             \item \textbf{Gradiente Derivativo ($K_{d1} \gg K_{d2} \gg K_{d3}$):}
-            \begin{itemize}
-                \item Cintura $q_1$: $\zeta_1 \approx 1.74$ (frena la inercia rotacional completa).
-                \item Hombro $q_2$: $\zeta_2 \approx 0.62$ (balance gravitacional).
-                \item Codo $q_3$: $K_{d3} \to 4.20$ ($\zeta_3 \approx 0.133$), ahorrando par en el actuador de $0.45\text{ N}\cdot\text{m}$.
+            \begin{itemize}\setlength{\itemsep}{1pt}
+                \item \scriptsize \textbf{Cintura $q_1$:} $\zeta_1 \approx 1.74$ (frena la inercia rotacional completa).
+                \item \scriptsize \textbf{Hombro $q_2$:} $\zeta_2 \approx 0.62$ (balance gravitacional en voladizo).
+                \item \scriptsize \textbf{Codo $q_3$:} $K_{d3} \to 4.20$ ($\zeta_3 \approx 0.133$), ahorrando par en el actuador de $0.45\text{ N}\cdot\text{m}$.
             \end{itemize}
         \end{enumerate}
     \end{block}
@@ -260,10 +311,10 @@
 \end{frame}
 
 % ==============================================================================
-% BLOQUE 4 — EXPOSITORA 4: YASMÍN MARIELA URREGO MONTOYA (MIN 09:00 - 12:00)
-% BENCHMARK MULTI-PARADIGMA Y CONFRONTACIÓN ADVERSARIAL EN MUJOCO HOSTIL (30 SEMILLAS)
+% SLIDE 8: BENCHMARK CONTRA 6 OPTIMIZADORES Y 5 CONTROLADORES
 % ==============================================================================
-\begin{frame}{Expositora 4 (Yasmín Urrego): Benchmark contra 6 Optimizadores y 5 Controladores}
+\begin{frame}{Benchmark contra 6 Optimizadores y 5 Controladores}
+\vspace{-0.15cm}
 \begin{columns}[T,onlytextwidth]
 \begin{column}{0.52\textwidth}
     \begin{block}{\scriptsize A. Comparación contra Algoritmos de Optimización}
@@ -283,9 +334,10 @@
         \bottomrule
         \end{tabular}}
     \end{block}
+    \vspace{-0.1cm}
     \begin{exampleblock}{\scriptsize B. Desempeño en Planta a $100\text{ Hz}$ (\texttt{evaluar\_controladores.py})}
         \scriptsize
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{1pt}
             \item \textbf{Costo de inferencia idéntico al PD:} $\mathbf{0.018\text{ ms}}$ ($810\times$ más veloz que MPC de $14.6\text{ ms}$).
             \item \textbf{Seguimiento nominal:} $4.573\text{ mm}$ vs. $6.879\text{ mm}$ ($\mathbf{-33.5\%}$).
             \item \textbf{Recuperación post-impacto:} $\mathbf{0.382\text{ s}}$ vs. $0.582\text{ s}$ ($\mathbf{-34.4\%}$).
@@ -294,25 +346,30 @@
 \end{column}
 \begin{column}{0.46\textwidth}
     \centering
-    \includegraphics[width=0.99\linewidth]{figuras_ce/fig_curvas_simulacion.png}
+    \includegraphics[width=0.98\linewidth]{figuras_ce/fig_curvas_simulacion.png}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Expositora 4 (Yasmín Urrego): Confrontación Adversarial en Gemelo Hostil ($N=30$)}
+% ==============================================================================
+% SLIDE 9: CONFRONTACIÓN ADVERSARIAL EN GEMELO HOSTIL (N=30)
+% ==============================================================================
+\begin{frame}{Confrontación Adversarial en Gemelo Hostil ($N=30$)}
+\vspace{-0.15cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.54\textwidth}
+\begin{column}{0.53\textwidth}
     \centering
-    \includegraphics[width=0.99\linewidth]{figuras_ce/fig_ce_05_confrontacion_hostil_30semillas.png}
+    \includegraphics[width=0.98\linewidth]{figuras_ce/fig_ce_05_confrontacion_hostil_30semillas.png}
 \end{column}
 \begin{column}{0.45\textwidth}
-    \begin{alertblock}{\scriptsize Pregunta Científica: ¿Qué pasa con $\zeta_3=0.133$ bajo Ruido y Retardo?}
+    \begin{alertblock}{\scriptsize ¿Qué pasa con $\zeta_3=0.133$ bajo Ruido y Retardo?}
         \scriptsize
-        Gemelo Hostil: Encoder $\sigma_q=0.002\text{ rad}$, Retardo $10\text{ ms}$, Lotes LHS~\cite{mckay1979}, CRN~\cite{law2015}, $0.5\mu + 0.5\max$:
-        \begin{itemize}
+        Gemelo Hostil: Encoder $\sigma_q=0.002\text{ rad}$, Retardo $10\text{ ms}$, Lotes LHS, CRN, agregación $0.5\mu + 0.5\max$:
+        \begin{itemize}\setlength{\itemsep}{1pt}
             \item \textbf{C2 ($\zeta_3=0.133$) amplifica el ruido:} Mantiene $f_1=9.71\text{ mm}$, pero su \textit{chattering} $f_3=\int\|\dot{\tau}\|^2 dt$ explota a $\mathbf{3.684}$ ($\mathbf{+64.0\%}$ peor que el Base, Rango Friedman $5.00$).
         \end{itemize}
     \end{alertblock}
+    \vspace{-0.1cm}
     \begin{exampleblock}{\scriptsize Solución: Genotipo Modal $[\omega_n,\zeta]$ + Gain-Scheduling + RBF}
         \scriptsize
         \resizebox{\linewidth}{!}{%
@@ -326,7 +383,7 @@
         \textbf{C5: GS + RBF + Memético} & 11.364 & \textbf{1.922 ($\mathbf{-47.8\%}$)} & $\mathbf{7.45\times 10^{-9}}$ \\
         \bottomrule
         \end{tabular}}
-        \vspace{0.05cm}
+        \vspace{0.04cm}
         \textbf{Friedman ($N=30$):} $p = 6.36 \times 10^{-24}$. \textbf{C5} reduce el \textit{chattering} en $\mathbf{-47.8\%}$ vs. C2 y $\mathbf{-14.5\%}$ vs. C1 Base ($IGD^+=0.0277$).
     \end{exampleblock}
 \end{column}
@@ -334,44 +391,45 @@
 \end{frame}
 
 % ==============================================================================
-% BLOQUE 5 — EXPOSITOR 5: JOSÉ LUIS ESPINOZA CHAMAYA (MIN 12:00 - 15:00)
-% DEMOSTRACIÓN EN VIVO DEL GEMELO DIGITAL 3D MUJOCO + CONCLUSIONES Y CIERRE
+% SLIDE 10: PROTOCOLO DE DEMOSTRACIÓN EN VIVO EN MUJOCO 3D Y CONCLUSIONES
 % ==============================================================================
-\begin{frame}{Expositor 5 (José Luis Espinoza): Protocolo de Demostración en Vivo en MuJoCo 3D}
+\begin{frame}{Protocolo de Demostración en Vivo en MuJoCo 3D}
+\vspace{-0.18cm}
 \begin{columns}[T,onlytextwidth]
-\begin{column}{0.52\textwidth}
-    \begin{block}{Arquitectura Interactiva en Tiempo Real ($500\text{ Hz}$ / $60\text{ FPS}$)}
+\begin{column}{0.49\textwidth}
+    \begin{block}{\footnotesize Arquitectura Interactiva en Tiempo Real ($500\text{ Hz}$ / $60\text{ FPS}$)}
+        \scriptsize
         Ejecución mediante \texttt{LANZAR\_SIMULADOR\_MUJOCO\_NSGA2.bat}:
-        \begin{enumerate}
+        \begin{enumerate}\setlength{\itemsep}{1pt}
             \item \textbf{Acto 1 — Captura Sub-milimétrica ($<2.0\text{ mm}$):}
-            \begin{itemize}
-                \item Carga de $\theta^*$ evolucionado por NSGA-II.
-                \item Cambio de esfera a \textcolor{unigreen}{\textbf{Verde Esmeralda}} con error estacionario de $\mathbf{0.068\text{ mm}}$ ($12.2\times$ superior al Base) y $0.0\%$ de saturación.
+            \begin{itemize}\setlength{\itemsep}{0.5pt}
+                \item \scriptsize Carga de $\theta^*$ evolucionado por NSGA-II.
+                \item \scriptsize Cambio de esfera a \textcolor{unigreen}{\textbf{Verde Esmeralda}} con error estacionario de $\mathbf{0.068\text{ mm}}$ ($12.2\times$ superior al Base) y $0.0\%$ de saturación.
             \end{itemize}
             \item \textbf{Acto 2 — Inyección de Perturbación Externa 3D en Vivo:}
-            \begin{itemize}
-                \item Disparo de pulso de torque perturbador en pleno vuelo.
-                \item Transición a estado \textcolor{magenta}{\textbf{Magenta}} y recuperación de la zona verde en $\mathbf{0.382\text{ s}}$.
+            \begin{itemize}\setlength{\itemsep}{0.5pt}
+                \item \scriptsize Disparo de pulso de torque perturbador en pleno vuelo.
+                \item \scriptsize Transición a estado \textcolor{magenta}{\textbf{Magenta}} y recuperación de la zona verde en $\mathbf{0.382\text{ s}}$.
             \end{itemize}
             \item \textbf{Acto 3 — Circuito Autónomo de 5 Aros ($\mathcal{C}^3$ Séptuple):}
-            \begin{itemize}
-                \item Navegación continua en modos \textbf{Estándar ($3.6\text{ s}$)}, \textbf{Rápido ($2.2\text{ s}$)} y \textbf{Turbo ($1.4\text{ s}$)} con \textbf{5/5 encestes perfectos}.
+            \begin{itemize}\setlength{\itemsep}{0.5pt}
+                \item \scriptsize Navegación en modos \textbf{Estándar ($3.6\text{ s}$)}, \textbf{Rápido ($2.2\text{ s}$)} y \textbf{Turbo ($1.4\text{ s}$)} con \textbf{5/5 encestes perfectos}.
             \end{itemize}
         \end{enumerate}
     \end{block}
 \end{column}
-\begin{column}{0.46\textwidth}
-    \begin{exampleblock}{Conclusiones, Limitaciones y Líneas Abiertas}
+\begin{column}{0.49\textwidth}
+    \begin{exampleblock}{\footnotesize Conclusiones, Limitaciones y Líneas Abiertas}
         \scriptsize
-        \begin{itemize}
+        \begin{itemize}\setlength{\itemsep}{1pt}
             \item \textbf{Logro 1 (Dominancia Bi-Objetivo):} Reducción de $-31.06\%$ en RMSE robusto y $-33.5\%$ en régimen nominal sin saturar servomotores Dynamixel.
             \item \textbf{Logro 2 (Gemelo Hostil $N=30$):} Reparametrización modal $[\omega_n,\zeta]$ + \textit{Gain-Scheduling} + sustituto RBF suprime el \textit{chattering} en $\mathbf{-47.8\%}$ ($p_{\text{Holm}}=7.45\times 10^{-9}$).
             \item \textbf{Limitación honesta:} El protocolo de $N=30$ semillas certifica la robustez del controlador fijo frente a ruido y trayectorias LHS; medir la varianza entre 30 corridas evolutivas completas queda como extensión.
             \item \textbf{Trabajos Futuros:}
-            \begin{enumerate}
-                \item \textbf{Coevolución Host--Parasite ($\min\text{--}\max$):} Evolucionar perturbaciones $\tau_{\text{ext}}(t)$ adversarias.
-                \item \textbf{NSGA-III en $\mathbb{R}^4$:} Incorporar manipulabilidad $-w_{\min}(q)$.
-                \item \textbf{GP / NEAT Residual Sim-to-Real.}
+            \begin{enumerate}\setlength{\itemsep}{0.5pt}
+                \item \scriptsize \textbf{Coevolución Host--Parasite ($\min\text{--}\max$):} Evolucionar perturbaciones $\tau_{\text{ext}}(t)$ adversarias.
+                \item \scriptsize \textbf{NSGA-III en $\mathbb{R}^4$:} Incorporar manipulabilidad $-w_{\min}(q)$.
+                \item \scriptsize \textbf{GP / NEAT Residual Sim-to-Real.}
             \end{enumerate}
         \end{itemize}
     \end{exampleblock}

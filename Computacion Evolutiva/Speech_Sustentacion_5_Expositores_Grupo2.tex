@@ -1,0 +1,137 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{geometry}
+\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm, headheight=14pt}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+\definecolor{uniblue}{RGB}{13, 71, 161}
+\definecolor{unigray}{RGB}{55, 71, 79}
+\definecolor{unigreen}{RGB}{27, 94, 32}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=uniblue,
+    urlcolor=uniblue
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textcolor{unigray}{\textbf{UNI — Posgrado FIIS | Computación Evolutiva 2026-2}}}
+\fancyhead[R]{\footnotesize\textcolor{unigray}{\textbf{Guion de Sustentación (5 Expositores $\times$ 3 min)}}}
+\fancyfoot[C]{\small\thepage}
+
+\begin{document}
+
+\begin{center}
+    {\LARGE \bfseries \textcolor{uniblue}{GUION MAESTRO Y SPEECH DE SUSTENTACIÓN (15 MINUTOS)}}\\[0.15cm]
+    {\large \textbf{5 Expositores $\times$ 3 Minutos + Demostración en Vivo del Gemelo Digital 3D MuJoCo}}\\[0.15cm]
+    {\small \textbf{Asignatura:} MAE-IA: Computación Evolutiva (2026-2) $\mid$ \textbf{Docente:} Dr. Yván Jesús Túpac Valdivia}\\
+    {\small \textbf{Repositorio GitHub:} \url{https://github.com/yasminum/NSGA-II-evol-strategic-multi}}
+\end{center}
+\vspace{-0.2cm}
+\rule{\linewidth}{0.5mm}
+
+\section*{Distribución Cronometrada de los 5 Expositores (15:00 min Totales)}
+\begin{table}[h!]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{c l c c p{7.5cm}}
+\toprule
+\textbf{\#} & \textbf{Expositor(a)} & \textbf{Tiempo} & \textbf{Slides} & \textbf{Contenido Asignado} \\
+\midrule
+\textbf{1} & \textbf{Amit Roy Flores Rivera} & \texttt{00:00 -- 03:00} & Slides 1--3 & \textbf{Fase I (Modelado):} Dinámica Euler-Lagrange 3-DOF, falla del diseño clásico ($\omega_n=13, \zeta=1.1$) y formulación multiobjetivo en MuJoCo. \\
+\textbf{2} & \textbf{Franklin Enrique Alegría Barboza} & \texttt{03:00 -- 06:00} & Slides 4--5 & \textbf{Fases II y III (Algoritmo y Software):} Arquitectura NSGA-II (SBX, PM, Torneo Aglomerado), selector post-Pareto, speedup $18.7\times$ y Frente de Pareto. \\
+\textbf{3} & \textbf{Raquel Medianero Huari} & \texttt{06:00 -- 09:00} & Slides 6--7 & \textbf{Fase IV-A (Dinámica y Biomecánica):} Convergencia generacional, Hipervolumen $HV(g)$, sensibilidad ($S_1\dots S_9$) y ley biomecánica ($K_{d1} \gg K_{d2} \gg K_{d3}$). \\
+\textbf{4} & \textbf{Yasmín Mariela Urrego Montoya} & \texttt{09:00 -- 12:00} & Slides 8--9 & \textbf{Fase IV-B (Benchmark y Gemelo Hostil $N=30$):} Comparación contra DE/CMA-ES/MPC y confrontación en MuJoCo hostil (ruido, retardo $10\text{ ms}$, genotipo modal $[\omega_n,\zeta]$, RBF y Wilcoxon-Holm). \\
+\textbf{5} & \textbf{José Luis Espinoza Chamaya} & \texttt{12:00 -- 15:00} & Slide 10 + \textbf{MuJoCo} & \textbf{Cierre Magistral (Simulador MuJoCo 3D en Vivo + Conclusiones):} Ejecución en vivo de los 3 actos (captura $<2\text{ mm}$, golpe 3D y circuito de 5 aros en modo Turbo) + Conclusiones, Limitaciones y Trabajos Futuros. \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% ==============================================================================
+\section*{EXPOSITOR 1: Amit Roy Flores Rivera (\texttt{00:00 -- 03:00}) — Slides 1, 2 y 3}
+\begin{itemize}
+    \item \textbf{\texttt{[00:00 -- 01:00]} (Slide 1 $\to$ Slide 2: Problema Físico y Falla del Diseño Clásico):} \\
+    ``Buenas tardes, Doctor Yván Túpac y compañeros. Somos el Grupo 2 y presentamos la sintonización evolutiva robusta de un Controlador por Torque Computado aplicado a un manipulador robótico espacial antropomórfico de 3 grados de libertad en MuJoCo. \\
+    \textit{(Pasar a Slide 2)} La dinámica de nuestro robot RRR —cintura, hombro y codo accionados por servomotores Dynamixel AX-18A y AX-12A— está gobernada por la ecuación no lineal acoplada de Euler-Lagrange: $M(q)\ddot{q} + C(q,\dot{q})\dot{q} + g(q) + f_v\dot{q} = \tau + \tau_{\text{ext}}$. En la ingeniería de control clásica, el método de Torque Computado utiliza un modelo nominal $\hat{M}(q)$ para cancelar las no linealidades y asigna ganancias uniformes colocando polos en $\omega_n = 13\text{ rad/s}$ y $\zeta = 1.1$, lo que produce $K_p = 169$ y $K_d = 28.6$ idénticos en las tres articulaciones. \textbf{¿Por qué fracasa este diseño clásico en la planta real?} Por tres razones físicas severas: primero, una \textbf{asimetría inercial de 10 a 1} entre la base que mueve toda la cadena y el codo distal limitado a solo $0.45\text{ N}\cdot\text{m}$; segundo, la \textbf{saturación dura no diferenciable} del actuador; y tercero, que cuando la masa real varía en $+25\%$ y la fricción en $+30\%$, $\hat{M}(q)$ ya no cancela a $M(q)$ y el paisaje de rendimiento pierde toda solución analítica cerrada.''
+
+    \item \textbf{\texttt{[01:00 -- 02:10]} (Slide 3: Cromosoma y 4 Escenarios Dinámicos Robustos):} \\
+    ``\textit{(Pasar a Slide 3)} Para resolver este problema sin derivadas analíticas, formulamos un problema de optimización continua sobre un cromosoma real de seis genes: $\theta = [K_{p1}, K_{p2}, K_{p3}, K_{d1}, K_{d2}, K_{d3}]^T$ acotado en $[20, 250]^3 \times [3, 55]^3$. En lugar de evaluar una trayectoria ideal aislada, nuestro Gemelo Digital en MuJoCo —que integra la física a $500\text{ Hz}$ y el control a $100\text{ Hz}$— somete a cada individuo a \textbf{cuatro escenarios dinámicos de 9 segundos}: 1) Régimen nominal con trayectoria quíntica $\mathcal{C}^2$; 2) Perturbación externa tridimensional inyectada entre $6.0$ y $6.6\text{ segundos}$; 3) Incertidumbre paramétrica con $+25\%$ de masa en el eslabón 1, $+15\%$ en el eslabón 2 y $+30\%$ de fricción viscosa; y 4) El régimen combinado extremo.''
+
+    \item \textbf{\texttt{[02:10 -- 03:00]} (Slide 3: Funciones Objetivo $f_1, f_2, f_3$ y Pase):} \\
+    ``Sobre estos cuatro escenarios minimizamos simultáneamente dos objetivos en conflicto directo: \textbf{$f_1(\theta)$}, el error cuadrático medio de seguimiento cartesiano $\text{RMSE}$ en milímetros de la punta del efector; y \textbf{$f_2(\theta)$}, la energía integral cuadrática de torque $\int_0^T \|\tau(t)\|_2^2\,dt$ en $\text{N}^2\text{m}^2\text{s}$, que mide el esfuerzo y calentamiento Joule de los servomotores. Además, en nuestra extensión adversarial en gemelo hostil incorporamos el \textbf{tercer objetivo $f_3(\theta) = \int \|\dot{\tau}\|^2\,dt$} para suprimir el \textit{chattering} de alta frecuencia bajo ruido de encoder. Doy pase a Franklin Alegría.''
+\end{itemize}
+
+% ==============================================================================
+\section*{EXPOSITOR 2: Franklin Enrique Alegría Barboza (\texttt{03:00 -- 06:00}) — Slides 4 y 5}
+\begin{itemize}
+    \item \textbf{\texttt{[03:00 -- 04:05]} (Slide 4: Arquitectura NSGA-II y Operadores SBX + PM):} \\
+    ``Gracias, Amit. \textit{(Mostrar Slide 4)} En la Fase II seleccionamos el paradigma \textbf{NSGA-II con codificación de punto flotante} por tres razones fundamentales frente a un algoritmo genético monobjetivo o discreto: Primero, nuestros objetivos tienen escalas dispares —$f_1$ varía entre $7.6$ y $69\text{ mm}$, mientras que $f_2$ varía apenas entre $0.44$ y $0.52\text{ N}^2\text{m}^2\text{s}$—; la dominancia de Pareto es invariante a la escala y no requiere inventar pesos arbitrarios a priori. Segundo, empleamos \textbf{Cruce Binario Simulado (SBX)} con $p_c = 0.90$ y $\eta_c = 15$, cuyo poder de búsqueda se adapta automáticamente a la separación entre padres sin sufrir acantilados de Hamming, acoplado con \textbf{Mutación Polinomial (PM)} con $p_m = 1/6$ (mutando en promedio un gen por cromosoma) y $\eta_m = 20$. Tercero, aplicamos reemplazo elitista $(\mu+\lambda)$ con \textbf{Torneo Binario Aglomerado ($\prec_c$)} y filtro de duplicados, garantizando conservar siempre los extremos del frente mientras la \textit{Crowding Distance} rellena uniformemente la curva de compromiso.''
+
+    \item \textbf{\texttt{[04:05 -- 05:00]} (Slide 4: Selector Post-Pareto y Paralelización $18.7\times$):} \\
+    ``Una vez que NSGA-II entrega las 24 soluciones del frente de Pareto $\mathcal{F}_1$, ¿cómo elegimos sin sesgo humano el controlador que va al robot? Diseñamos un \textbf{selector automático post-Pareto en dos etapas}: primero filtramos el subconjunto $\mathcal{F}_{\text{dom}}$ que supera en precisión al controlador analítico base, y dentro de ese cono elegimos el individuo $\theta^*$ que minimiza la distancia euclidiana $L_2$ normalizada al punto ideal utópico $z^{\min}$. En la Fase III de ingeniería de software resolvimos el cuello de botella computacional: pre-cargando en memoria RAM los modelos nominal e incierto de MuJoCo dentro de un pool multiproceso de 12 núcleos, redujimos el tiempo por evaluación de $1.16\text{ segundos}$ a solo \textbf{$0.062\text{ segundos}$} —un \textbf{speedup real de $18.7$ veces}—, ejecutando $1,920$ simulaciones dinámicas ($4.8\text{ horas}$ de operación física del robot) en \textbf{29.88 segundos}.''
+
+    \item \textbf{\texttt{[05:00 -- 06:00]} (Slide 5: Frente de Pareto y Dominancia Estricta):} \\
+    ``\textit{(Pasar a Slide 5)} En esta gráfica observamos el espacio objetivo y los frentes de Pareto obtenidos. El punto rojo representa el controlador clásico CTC Base con $11.353\text{ mm}$ de error y $0.5159$ de esfuerzo. La región sombreada en verde es el \textbf{cono de dominancia estricta de Pareto}: todas las soluciones evolucionadas dentro de esta caja ganan simultáneamente en precisión y en ahorro de energía. Nuestro extremo $\#1$ reduce el error a \textbf{$7.640\text{ mm}$} ($-32.7\%$), y nuestra solución compromiso $\theta^*$ alcanza \textbf{$7.827\text{ mm}$} (\textbf{$-31.06\%$ de error}) reduciendo a la vez el esfuerzo energético a $0.5114\text{ N}^2\text{m}^2\text{s}$. Doy pase a Raquel Medianero.''
+\end{itemize}
+
+% ==============================================================================
+\section*{EXPOSITORA 3: Raquel Medianero Huari (\texttt{06:00 -- 09:00}) — Slides 6 y 7}
+\begin{itemize}
+    \item \textbf{\texttt{[06:00 -- 07:05]} (Slide 6 Izquierda: Convergencia, Paradoja del Promedio e Hipervolumen):} \\
+    ``Gracias, Franklin. \textit{(Mostrar Slide 6, panel izquierdo)} Para auditar la dinámica interna de NSGA-II a lo largo de las 20 generaciones, rastreamos tres indicadores: los extremos elitistas, el promedio poblacional y el \textbf{Hipervolumen Dominado normalizado $HV(g)$}. Primero, confirmamos la \textbf{monotonía elitista}: el mejor RMSE cae sin retrocesos desde $8.316\text{ mm}$ en la generación 1 hasta \textbf{$7.640\text{ mm}$} en la generación 20, mientras el mínimo esfuerzo cae de $0.4999$ a \textbf{$0.4466\text{ N}^2\text{m}^2\text{s}$}. Segundo, explicamos un fenómeno clave de la computación evolutiva multiobjetivo: \textbf{¿por qué el RMSE promedio poblacional $\bar{f}_1$ sube de $15.6\text{ mm}$ a $38.6\text{ mm}$ mientras el esfuerzo promedio baja?} En optimización monobjetivo eso parecería divergencia, pero en NSGA-II ocurre porque el operador de \textit{Crowding Distance} descubre y puebla progresivamente la cola derecha del frente: soluciones ecológicas que ahorran mucha batería a cambio de menor rigidez en el hombro. Tercero, el Hipervolumen crece desde $0.4834$ hasta estabilizarse asintóticamente en \textbf{$0.5489$} desde la generación 10, manteniendo una diversidad genotípica sana de $\sigma_\theta = 0.153 > 0$, lo que descarta cualquier convergencia prematura.''
+
+    \item \textbf{\texttt{[07:05 -- 08:00]} (Slide 6 Derecha: Estudio de Sensibilidad $S_1$ a $S_9$):} \\
+    ``\textit{(Señalar panel derecho de Slide 6)} Para no elegir hiperparámetros a ciegas, ejecutamos un estudio factorial de \textbf{9 configuraciones ($S_1$ a $S_9$)}. Demostramos que la configuración $S_3$ ($N_{\text{pop}}=24, G=20$, 480 evaluaciones) supera en Hipervolumen ($0.5489$ vs. $0.5422$) y en precisión ($7.827\text{ mm}$ vs. $7.912\text{ mm}$) a una población más ancha pero menos profunda como $S_4$ ($N_{\text{pop}}=36, G=15$, 540 evaluaciones) ahorrando $21\%$ de tiempo de cómputo. Asimismo, demostramos que una mutación muy baja ($S_7, p_m=0.05$) estanca el frente en $8.98\text{ mm}$, mientras que una mutación agresiva de paso largo ($S_9, \eta_m=5$) destruye los bloques constructores y degrada el Hipervolumen a $0.5119$.''
+
+    \item \textbf{\texttt{[08:00 -- 09:00]} (Slide 7: Interpretación Biomecánica del Cromosoma $\theta^*$):} \\
+    ``\textit{(Pasar a Slide 7)} Al inspeccionar los genes del cromosoma ganador $\theta^*_{\text{tesis}}$, descubrimos que NSGA-II encontró por sí solo una ley biomecánica asimétrica: 1) \textbf{Rigidización proporcional ($K_{p,i} > 169$)} en las tres articulaciones para vencer la incertidumbre de masa $+25\%$ y rechazar perturbaciones; y 2) Un \textbf{gradiente decreciente de amortiguamiento derivativo ($K_{d1} = 49.65 \gg K_{d2} = 17.33 \gg K_{d3} = 4.20$)}. NSGA-II sobreamortigua la cintura ($\zeta_1 = 1.74$) porque soporta la inercia rotacional de todo el brazo, y reduce la ganancia derivativa del codo ligero ($\zeta_3 = 0.133$). Ahora bien, ¿es ese bajo amortiguamiento distal $\zeta_3 = 0.133$ robusto si añadimos ruido real de sensores? Doy pase a Yasmín Urrego.''
+\end{itemize}
+
+% ==============================================================================
+\section*{EXPOSITORA 4: Yasmín Mariela Urrego Montoya (\texttt{09:00 -- 12:00}) — Slides 8 y 9}
+\begin{itemize}
+    \item \textbf{\texttt{[09:00 -- 09:55]} (Slide 8: Benchmark contra 6 Optimizadores y 5 Controladores):} \\
+    ``Gracias, Raquel. \textit{(Mostrar Slide 8)} Nuestra validación comparativa se ejecutó en dos niveles. En el \textbf{primer nivel}, contrastamos NSGA-II contra cinco algoritmos sobre el mismo Gemelo Digital: Random Search, Nelder-Mead Simplex, Evolución Diferencial (\texttt{DE/rand/1/bin}) y \textbf{CMA-ES}. Mientras CMA-ES y DE optimizan una función escalarizada fija logrando $7.576\text{ mm}$, \textbf{NSGA-II iguala virtualmente ese extremo ($7.640\text{ mm}$), logra el menor gasto energético en su solución compromiso ($0.5114\text{ N}^2\text{m}^2\text{s}$)} y entrega 24 controladores óptimos en una sola ejecución. En el \textbf{segundo nivel}, validamos el controlador evolucionado a $100\text{ Hz}$ frente a PD clásico y Control Predictivo MPC: nuestro controlador evolutivo tarda apenas \textbf{$0.018\text{ milisegundos}$ por ciclo} —$810$ veces más rápido que los $14.6\text{ ms}$ del MPC—, reduciendo el error nominal en \textbf{$-33.5\%$} ($4.57\text{ mm}$ vs. $6.88\text{ mm}$) y el tiempo de recuperación post-impacto en \textbf{$-34.4\%$} ($0.382\text{ s}$ vs. $0.582\text{ s}$).''
+
+    \item \textbf{\texttt{[09:55 -- 11:05]} (Slide 9: Auditoría Adversarial en Gemelo Hostil y Genotipo Modal):} \\
+    ``\textit{(Pasar a Slide 9)} Sin embargo, nos hicimos una autocrítica científica rigurosa: en el gemelo ideal sin ruido, NSGA-II llevó el codo a la frontera $K_{p3}\to 250, K_{d3}\to 4.2$ ($\zeta_3 = 0.133$). ¿Qué ocurre cuando existen imperfecciones reales de hardware? Construimos un \textbf{Gemelo Digital MuJoCo Hostil} con cinco mejoras estructurales: 1) Inyectamos ruido gaussiano de encoders ($\sigma_q = 0.002\text{ rad}$, $\sigma_{\dot{q}} = 0.02\text{ rad/s}$), retardo de transporte de $10\text{ ms}$ y un \textbf{mini-batch espacial de trayectorias 3D} muestreado por \textit{Latin Hypercube Sampling} bajo Números Aleatorios Comunes (CRN); 2) Formulamos el problema \textbf{Tri-Objetivo en $\mathbb{R}^3$} añadiendo la tasa de par anti-chattering $f_3 = \int \|\dot{\tau}\|^2\,dt$ con agregación robusta media--peor caso ($0.5\mu + 0.5\max$); 3) \textbf{Reparametrizamos el genotipo en coordenadas modales físicas $\tilde{\theta} = [\omega_{n,i}, \zeta_i]$}, decodificando $K_{p,i} = \omega_{n,i}^2$ y $K_{d,i} = 2\zeta_i\omega_{n,i}$, lo que alinea el cruce SBX con las variedades de amortiguamiento constante e impone $\zeta_i \ge 0.35$ como una simple cota de caja; y 4) Implementamos el controlador \textbf{C5 con Gain-Scheduling no lineal de 12 genes}, asistido por un modelo sustituto \textbf{RBF con criterio Lower Confidence Bound} y búsqueda local memética.''
+
+    \item \textbf{\texttt{[11:05 -- 12:00]} (Slide 9: Veredicto Estadístico en 30 Semillas con Friedman y Wilcoxon-Holm):} \\
+    ``Al confrontar los 5 controladores a lo largo de \textbf{$N = 30$ semillas independientes ($1,800$ simulaciones 3D en MuJoCo)} mediante pruebas no paramétricas de Friedman ($p = 6.36 \times 10^{-24}$) y Wilcoxon con corrección de Holm-Bonferroni, demostramos dos hallazgos decisivos: Primero, el cromosoma de borde $\zeta_3 = 0.133$ (\textbf{C2}) conserva buena precisión ($9.71\text{ mm}$), pero \textbf{amplifica el ruido del encoder disparando el chattering $f_3$ en $+64.0\%$} ($3.684$ vs. $2.247$ del Base, peor rango de Friedman $5.00$). Segundo, nuestros controladores evolucionados \textbf{C4 (Modal, $\zeta \in [0.81, 1.28]$)} y \textbf{C5 (Gain-Scheduled + RBF + Memético)} dominan estrictamente al CTC Base en los tres objetivos y \textbf{suprimen el chattering en un $-47.8\%$ respecto a C2 y en un $-14.5\%$ respecto al propio CTC Base analítico} ($p_{\text{Holm}} = 7.45 \times 10^{-9}$). Doy pase a José Luis Espinoza para la demostración en vivo de nuestro Gemelo Digital MuJoCo 3D y las conclusiones finales.''
+\end{itemize}
+
+% ==============================================================================
+\section*{EXPOSITOR 5 (CIERRE CON SIMULADOR EN VIVO): José Luis Espinoza Chamaya (\texttt{12:00 -- 15:00}) — Slide 10 + MuJoCo 3D}
+\begin{itemize}
+    \item \textbf{\texttt{[12:00 -- 12:50]} (Acto 1 en Vivo: Panel Científico y Captura Verde Esmeralda $< 2.0\text{ mm}$):} \\
+    ``Muchas gracias, Yasmín. Doctor Túpac, compañeros: para demostrar que nuestros resultados no son solo números en tablas estáticas, tengo corriendo en tiempo real nuestro \textbf{Gemelo Digital 3D en MuJoCo a $500\text{ Hz}$} gobernado por el controlador evolucionado con NSGA-II. \\
+    \textit{(Cambiar con Alt+Tab a la ventana del Simulador MuJoCo abierta con \texttt{LANZAR\_SIMULADOR\_MUJOCO\_NSGA2.bat})} \\
+    Observen en el panel izquierdo el bloque \textbf{`Ley de Control Activa: CTC\_EVO (NSGA-II)'}, que inyecta en línea el cromosoma óptimo desde \texttt{best\_ctc\_gains.json} junto con las matrices dinámicas $\hat{M}(q)$ y $\hat{h}(q,\dot{q})$. En el visor 3D derecho, vemos cómo el efector final sigue la trayectoria polinomial suave hasta la esfera objetivo. En el instante en que ingresa al umbral sub-milimétrico menor a \textbf{$2.0\text{ milímetros}$}, la esfera cambia a \textbf{\textcolor{unigreen}{Verde Esmeralda}}, estabilizándose con un error estacionario de apenas \textbf{$0.068\text{ mm}$} —doce veces más preciso que el diseño analítico— y con \textbf{$0.0\%$ de saturación} en los tres servomotores Dynamixel.''
+
+    \item \textbf{\texttt{[12:50 -- 13:35]} (Acto 2 en Vivo: Disparo de Perturbación Externa 3D $\to$ Magenta $\to$ Recuperación en $0.382\text{ s}$):} \\
+    ``Ahora pongamos a prueba en vivo la robustez física que evolucionó NSGA-II. \\
+    \textit{(Hacer clic en el botón de Perturbación Externa / Impulso en la interfaz mientras el brazo sostiene la esfera)} \\
+    Acabo de inyectar un pulso perturbador tridimensional directo sobre las articulaciones. Observen cómo el indicador cambia inmediatamente a color \textbf{\textcolor{magenta}{Magenta (Perturbación Activa)}} y en las curvas inferiores se registra el pico de par correctivo; sin embargo, gracias a la alta rigidez proporcional evolucionada y al amortiguamiento desacoplado de la cintura y el hombro, el brazo absorbe el impacto sin oscilar y recupera el estado \textbf{\textcolor{unigreen}{Verde Esmeralda} en apenas $0.382\text{ segundos}$}, superando ampliamente los $0.582\text{ segundos}$ del controlador clásico.''
+
+    \item \textbf{\texttt{[13:35 -- 14:15]} (Acto 3 en Vivo: Circuito Autónomo de 5 Aros en Modo Rápido / Turbo):} \\
+    ``Finalmente, activemos el desafío más exigente del simulador: el \textbf{Modo Juego — Circuito Espacial de 5 Aros} con trayectorias séptuples de clase $\mathcal{C}^3$. \\
+    \textit{(Activar el Circuito de 5 Aros y cambiar la velocidad de Estándar a Rápido / Turbo)} \\
+    Observen cómo el manipulador recorre secuencialmente los cinco aros tridimensionales en régimen \textbf{Turbo ($1.4\text{ segundos}$ por tramo)}, manteniendo el índice de manipulabilidad de Yoshikawa $w(q)$ lejos de singularidades y logrando \textbf{5 de 5 encestes perfectos} con movimiento suave y libre de \textit{chattering}.''
+
+    \item \textbf{\texttt{[14:15 -- 15:00]} (Slide 10: Conclusiones, Limitación Honesta y Trabajos Futuros):} \\
+    ``\textit{(Volver a Slide 10 para el cierre formal)} Para concluir nuestra presentación, sintetizamos tres mensajes finales: \\
+    1. \textbf{En Logros:} Demostramos que NSGA-II domina estrictamente al diseño analítico clásico reduciendo el RMSE robusto en \textbf{$-31.06\%$}, y probamos estadísticamente en el gemelo MuJoCo hostil ($N=30$ semillas, Friedman y Wilcoxon-Holm) que la reparametrización modal $[\omega_n, \zeta]$ con \textit{Gain-Scheduling} y sustituto RBF \textbf{suprime el chattering en un $-47.8\%$} ($p_{\text{Holm}} = 7.45 \times 10^{-9}$). \\
+    2. \textbf{En Limitaciones (con total rigor metodológico):} Nuestro protocolo de $N=30$ semillas certifica la robustez del \textit{controlador} frente a ruido y trayectorias LHS no vistas, evaluando controladores fijos evolucionados una única vez; medir la varianza del \textit{algoritmo} entre 30 corridas evolutivas independientes queda abierto como línea de medición. \\
+    3. \textbf{En Trabajos Futuros:} Proponemos escalar hacia \textbf{Coevolución Competitiva Host--Parasite ($\min\text{--}\max$)} que evolucione perturbaciones adversarias, \textbf{NSGA-III en $\mathbb{R}^4$} añadiendo la manipulabilidad $-w_{\min}(q)$, y \textbf{Programación Genética / NEAT residual} para transferencia \textit{Sim-to-Real}. \\
+    Todo el código, los datos de las 30 semillas y este simulador están publicados en nuestro GitHub. Muchas gracias, Doctor Túpac; quedamos atentos a sus preguntas.''
+\end{itemize}
+
+\end{document}
